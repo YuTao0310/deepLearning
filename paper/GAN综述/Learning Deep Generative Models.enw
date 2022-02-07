@@ -1,0 +1,15 @@
+%0 Journal Article
+%A Ruslan Salakhutdinov
+%T Learning Deep Generative Models
+%D 2015
+%J Annual Review of Statistics and Its Application
+%P 361-385
+%V 2
+%N 1
+%R 10.1146/annurev-statistics-010814-020120
+%U https://www.annualreviews.org/doi/abs/10.1146/annurev-statistics-010814-020120
+%X Building intelligent systems that are capable of extracting high-level representations from high-dimensional sensory data lies at the core of solving many artificial intelligence–related tasks, including object recognition, speech perception, and language understanding. Theoretical and biological arguments strongly suggest that building such systems requires models with deep architectures that involve many layers of nonlinear processing. In this article, we review several popular deep learning models, including deep belief networks and deep Boltzmann machines. We show that (a) these deep generative models, which contain many layers of latent variables and millions of parameters, can be learned efficiently, and (b) the learned high-level feature representations can be successfully applied in many application domains, including visual object recognition, information retrieval, classification, and regression tasks.
+%K deep learning,deep belief networks,deep Boltzmann machines,graphical models
+
+
+
