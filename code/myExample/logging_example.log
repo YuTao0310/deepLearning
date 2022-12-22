@@ -1,0 +1,4 @@
+2022-03-16 13:59:12,635 - root - INFO - info message
+2022-03-16 13:59:12,635 - root - WARNING - warn message
+2022-03-16 13:59:12,635 - root - ERROR - error message
+2022-03-16 13:59:12,635 - root - CRITICAL - critical message
