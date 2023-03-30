@@ -114,9 +114,24 @@ typing_extensions==4.1.1
 urllib3==1.26.9
 ```
 
-==nvcc为10.2安装==
+==nvcc为10.1 10.2安装==
 
-```conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch```
+`conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch`
+
+**torch测试代码**
+
+```python
+import torch
+flag = torch.cuda.is_available()
+print(flag)
+
+ngpu= 1
+# Decide which device we want to run on
+device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
+print(device)
+print(torch.cuda.get_device_name(0))
+print(torch.rand(3,3).cuda()) 
+```
 
 # 日志
 
@@ -132,15 +147,13 @@ urllib3==1.26.9
 import logging
 logging.basicConfig(filename = './sdv/logging_example.log', level = logging.INFO,format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
- 
+
 logging.debug('debug message')
 logging.info('info message')
 logging.warning('warn message')
 logging.error('error message')
 logging.critical('critical message')
 ```
-
-
 
 ## 2、将输出信息存到一个文件中
 
@@ -218,7 +231,7 @@ sys.stdout = open('./ctgan/ctgan_epoch300_record.log', mode = 'w',encoding='utf-
 
 * torchvision.datasets
 * torch.hub.load(path)
-* timm.models
+* timm.models(pip install timm即可)
 * 直接下好加载，分为加载字典和加载整个模型（前者比后者小）
 
 torh.load本地加载 模型或者模型字典
@@ -267,7 +280,6 @@ class _IterableDatasetFetcher(_BaseDatasetFetcher):
         else:
             data = next(self.dataset_iter)
         return self.collate_fn(data)
-
 ```
 
 `data = next(self.dataset_iter)`相当于调用下列函数，__getitem__是先获取原图片再调用transforms进行转换。
@@ -312,36 +324,36 @@ class _IterableDatasetFetcher(_BaseDatasetFetcher):
 * 数据增强 data augmentation
 
 * 迁移学习 transfer learning
-
+  
   - transfer learning最小化当前的model（只有一个）在所有任务上的loss，所以model pretraining希望找到一个在所有任务（实际情况往往是大多数任务）上都表现较好的一个初始化参数，这个参数要在多数任务上**当前表现较好**。
   - meta learning最小化每一个子任务训练一步之后，第二次计算出的loss，用第二步的gradient更新meta网络，这代表了什么呢？子任务从【状态0】，到【状态1】，我们希望状态1的loss小，说明meta learning更care的是**初始化参数未来的潜力**。
-
+  
   前者关注当下，后者关注未来。
-
+  
   参考：https://zhuanlan.zhihu.com/p/136975128
-
+  
   迁移学习方式：
-
+  
   * CNN feature + classifier 利用深度学习模型的已经训练好的特征提取器，参数固定直接使用，应用在下游任务过程中，只需要优化classifier中的参数即可。
-
+  
   * Fine-tuning（微调）：
-
+    
     1）微调所有层
-
+    
     2）固定网络前面几层权重，只微调网络的后面几层。这样做两个原因：其一，避免数据量过小造成过拟合的现象；其二，CNN前面几层的特征中包含更多的一般的特征（比如边缘信息、色彩信息），但是CNN后面几层的特征学习更加注重高层信息，也就是语义特征，这与特定数据集有关系。
 
 * 元学习 meta learning
 
 * 域自适应 domain adaptation
-
+  
   * 域自适应倾向于解决特征空间和类别空间一致，但是特征分布不一致的任务。举个简单的例子：对于同样一个目标检测的任务，基于**公开数据集(源域)**训练出了一个模型，由于公开数据集与**自己采集的数据集(目标域)**的特征分布存在差异，那么模型可能会在源域上过拟合，导致在目标域上测试效果不好。但是此时源域与目标域对应的都是同一个目标检测任务，且二者对应的特征空间和类别空间是一样的，那么就可以通过域自适应方法将源域模型迁移到目标域上。常用的域自适应方法如样本自适应、特征自适应以及模型自适应可以从任务的不同阶段提取源域与目标域的相似性关系，提升在目标域上的泛化性。
-
+  
   * 相比于域自适应，迁移学习的研究范围更广，可以用于特征空间和类别空间不一致的情况，即对于两种不同的任务，迁移学习也可以利用实现相似的领域知识进行迁移。从这个层面上来讲，**域自适应可以看做是迁移学习的一个子方向**。
-
+    
     参考：https://www.zhihu.com/question/374562547/answer/1243077910
 
 * 小样本学习 few-shot learning
-
+  
   小样本学习是元学习在监督学习上的应用。
 
 * 特征工程 feature engineering
@@ -359,13 +371,13 @@ learning representations of the data that make it easier to extract useful infor
 ### 根据应用场景分类
 
 * 计算机视觉 computer vision
-
+  
   分类、定位、检测、分割（语义和实例）、图像生成、视频、超分等等
 
 * 自然语言处理 natural language processing
 
 * 时序数据 time series
-
+  
   speech、audio
 
 * 表格数据 tabular data
@@ -373,8 +385,6 @@ learning representations of the data that make it easier to extract useful infor
 ### 根据应用领域分类
 
 工业、医疗、农业、交通等等
-
-
 
 # 分类模型
 
@@ -398,7 +408,7 @@ https://paperswithcode.com/methods/category/image-models
 [10、ShuffleNetV2 CNN 2018]()
 [11、MobileNet V1 V2 V3 CNN 2017 2018 2019](https://zhuanlan.zhihu.com/p/70703846)
 [12、EfficientNet V1 V2 CNN 2019 2021](https://zhuanlan.zhihu.com/p/67834114)
-[13、RegNet CNN 2020](https://www.zhihu.com/question/384255803 			)
+[13、RegNet CNN 2020](https://www.zhihu.com/question/384255803             )
 [14、VisionTransformer Attention 2020](https://zhuanlan.zhihu.com/p/340149804 https://zhuanlan.zhihu.com/p/317756159)
 [15、DeiT Attention 2021](https://zhuanlan.zhihu.com/p/394627382)
 [16、SwinTransformer Attention 2021](https://zhuanlan.zhihu.com/p/367111046)
@@ -417,11 +427,11 @@ https://pytorch.org/vision/stable/models.html#object-detection-instance-segmenta
 ## 1、网络结构改进
 
 * 重新设计网络架构的模式：
-
+  
   网络结构模式分为同质架构（isotropic architecture）或者非结构性架构（non-hierarchical architecture）、金字塔架构（pyramidal architecture）或者结构化架构（hierarchical architecture）。[参考](https://zhuanlan.zhihu.com/p/455086818)
-
+  
   同质架构由相同的blocks串联而成，基于同质架构的模型只需要用特征大小（patch embedding的维度）和网络深度（blocks的数量）两个参数定义，比如说ViT、MLP-Mixer。
-
+  
   金字塔架构包含几个不同的stage，各个stage之间是一个下采样操作（比如stride为2的max pooling或者conv、Swin Transformer的Parch Merging）。金字塔架构的模型例子有Resnet、Swin Transformer、ConvNeXt。
 
 * 引入新模块（例如SENet）
@@ -453,8 +463,6 @@ https://pytorch.org/vision/stable/models.html#object-detection-instance-segmenta
 * training schedule：学习率恒定不变、warmup策略、随着训练过程变化（比如在训练到1/3 2/3时学习率发生变化；直接使用cosine的学习率变化）；epoch或者steps的设定
 
 * 其他超参数设定：batch_size、input_size（resolution）、优化器中的参数（如momentum、beltas）
-
-  
 
 # 机器学习与深度学习通用问题
 
@@ -551,8 +559,6 @@ batch-size越小，降低内存利用率，增加内存容量；对相同数据�
 
 ![image-20220413133020880](C:\Users\28439\AppData\Roaming\Typora\typora-user-images\image-20220413133020880.png)
 
-
-
 3、inception
 
 ![preview](https://pic4.zhimg.com/v2-660fdabd306652c32afe7ce15bd9d38b_r.jpg)
@@ -613,5 +619,4 @@ CNN and Multi-Spectral Vision System
 
 5、研究方案记得使用动词描述，这样更加生动。
 
-6、内容之间记得一一对应，前面提及到的，后面记得用到。
-
+6、内容之间记得一一对应，前面提及到的，后面记得用到。********
